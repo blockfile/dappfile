@@ -28,7 +28,7 @@ const corsOptions = {
     origin: [
         "https://dapp.fileum.xyz",
         "http://localhost:3000",
-        "http://159.89.209.121:3000",
+        "http://152.42.164.187:3000",
     ], // Add your production and development URLs here
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
