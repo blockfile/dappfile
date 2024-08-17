@@ -93,7 +93,7 @@ function UploadPage() {
     const [startTyping, setStartTyping] = useState(false);
 
     const messages = ["Please select file you want to upload."];
-    const etherfile = "//ETHERBOT: ";
+    const fileum = "//FILEUMBOT: ";
 
     useEffect(() => {
         let timer;
@@ -170,7 +170,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://dapp.etherfile-ai.com/api/files?walletAddress=${account}`
+                    `https://app.fileum.xyz/api/files?walletAddress=${account}`
                 );
                 console.log(response.data); // Log to see the data structure
                 setFiles(response.data);
@@ -202,7 +202,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://dapp.etherfile-ai.com/api/totalSize?walletAddress=${account}`
+                    `https://app.fileum.xyz/api/totalSize?walletAddress=${account}`
                 );
                 const { totalSize } = response.data;
                 setTotalUploadedSize(totalSize);
@@ -220,7 +220,7 @@ function UploadPage() {
         const selectedFiles = Array.from(event.target.files);
         const newQueue = selectedFiles.map((file) => {
             const { token, cancel } = axios.CancelToken.source();
-            const initialMessage = `//ETHERBOT: ${file.name} /`;
+            const initialMessage = `//FILEUM: ${file.name} /`;
             setGreetings((prev) => [...prev, initialMessage]);
             return {
                 file,
@@ -243,7 +243,7 @@ function UploadPage() {
         const slashes = "/".repeat(progress / 10); // One slash for each 10% completed
         newGreetings[
             fileData.messageIndex
-        ] = `//ETHERBOT: ${fileData.file.name} ${slashes}`;
+        ] = `//FILEUM: ${fileData.file.name} ${slashes}`;
 
         setUploadQueue(newQueue);
         setGreetings(newGreetings);
@@ -307,7 +307,7 @@ function UploadPage() {
 
                 try {
                     await axios.post(
-                        "https://dapp.etherfile-ai.com/api/upload",
+                        "https://app.fileum.xyz/api/upload",
                         formData,
                         {
                             headers: {
@@ -422,7 +422,7 @@ function UploadPage() {
 
         try {
             const response = await axios.post(
-                "https://dapp.etherfile-ai.com/api/delete-multiple",
+                "https://app.fileum.xyz/api/delete-multiple",
                 { fileIds },
                 {
                     headers: {
@@ -463,7 +463,7 @@ function UploadPage() {
         if (file) {
             // Assuming the download URL is something like 'https://dapp.blockfile.xyz/download/{fileId}'
             // Adjust this URL structure as needed for your app
-            const downloadUrl = `https://dapp.etherfile-ai.com/download/${fileId}`;
+            const downloadUrl = `https://app.fileum.xyz/download/${fileId}`;
 
             // Use the navigator.clipboard API to copy the download URL to the clipboard
             navigator.clipboard
@@ -636,7 +636,7 @@ function UploadPage() {
                             <div className="files-table-container md:max-h-[750px] overflow-y-auto sm:max-h-[600px] bg-black   font-Mono rounded-t-xl">
                                 <div className=" bg-slate-500 flex justify-center space-x-4">
                                     <span className="my-auto">
-                                        //ETHERFILE.EXE
+                                        //FILEUM.EXE
                                     </span>
                                     <div className="animate-spin">
                                         <span>/</span>
@@ -831,7 +831,7 @@ function UploadPage() {
                                     <div className="flex-grow flex items-center justify-center">
                                         <div className="lg:w-[500px] lg:h-[500px] md:w-[400px] md:h-[400px] sm:w-[300px] sm:h-[300px] bg-black flex flex-col justify-between rounded-b-lg mx-2 bg-opacity-40 rounded-t-lg">
                                             <div className="  py-1 font-Mono flex justify-center space-x-4 rounded-t-xl">
-                                                <span>//ETHERFILE.EXE</span>
+                                                <span>//FILEUM.EXE</span>
                                                 <div className="animate-spin">
                                                     <span>/</span>
                                                 </div>
@@ -843,7 +843,7 @@ function UploadPage() {
                                                             key={index}
                                                             className="font-Mono">
                                                             <span className="text-green-500">
-                                                                {etherfile}
+                                                                {fileum}
                                                             </span>
                                                             {greeting}
                                                         </div>

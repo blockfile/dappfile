@@ -6,13 +6,11 @@
 }
 
 .bg3 {
-    background-image: linear-gradient(
-        to right top,
-        #46034a,
-        #3c0432,
-        #2d071f,
-        #1d0511,
-        #000000
+    background: linear-gradient(
+        90deg,
+        rgba(2, 0, 36, 1) 0%,
+        rgba(81, 81, 242, 1) 71%,
+        rgba(29, 169, 198, 1) 100%
     );
     position: absolute;
     z-index: 0;

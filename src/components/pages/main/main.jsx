@@ -15,12 +15,12 @@ function Main() {
     const [showAbout, setShowAbout] = useState(false);
     const navigate = useNavigate();
     const messages = [
-        " Welcome to ETHERFILE!",
+        " Welcome to FILEUM!",
         "Please Enter your Command Selection:",
         "1: Back to Homepage.",
         "2: Go to dapp and start uploading.",
     ];
-    const etherfile = "//ETHERBOT: ";
+    const fileum = "//FILEUMBOT: ";
     const [showLoading, setShowLoading] = useState(false);
 
     useEffect(() => {
@@ -88,7 +88,7 @@ function Main() {
                 <div className={`flipper ${showAbout ? "flip" : ""}`}>
                     <div className="front w-[500px] h-[500px] bg-black flex flex-col justify-between rounded-b-lg mx-2 bg-opacity-40 rounded-t-lg">
                         <div className=" bg-slate-500 py-1 font-Mono flex justify-center space-x-4 rounded-t-xl">
-                            <span>//ETHERFILE.EXE</span>
+                            <span>//FILEUM.EXE</span>
                             <div className="animate-spin">
                                 <span>/</span>
                             </div>
@@ -97,7 +97,7 @@ function Main() {
                             {greetings.map((greeting, index) => (
                                 <div key={index} className="font-Mono">
                                     <span className="text-green-500">
-                                        {etherfile}
+                                        {fileum}
                                     </span>
                                     {greeting}
                                 </div>

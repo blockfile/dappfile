@@ -14,7 +14,7 @@ function DownloadPage() {
         const fetchFile = async () => {
             try {
                 const response = await axios.get(
-                    `https://dapp.etherfile-ai.com/api/files/${id}`
+                    `https://app.fileum.xyz/api/files/${id}`
                 );
                 if (response.data) {
                     const formattedSize = (
@@ -80,14 +80,14 @@ function DownloadPage() {
                                         <video
                                             controls
                                             width="640"
-                                            src={`https://web3storage.sgp1.cdn.digitaloceanspaces.com/uploads/${file.walletAddress}/${file.filename}`}
+                                            src={`https://fileumstorage.sgp1.cdn.digitaloceanspaces.com/uploads/${file.walletAddress}/${file.filename}`}
                                             className="rounded">
                                             Your browser does not support the
                                             video tag.
                                         </video>
                                     ) : (
                                         <a
-                                            href={`https://web3storage.sgp1.cdn.digitaloceanspaces.com/uploads/${file.walletAddress}/${file.filename}`}
+                                            href={`https://fileumstorage.sgp1.cdn.digitaloceanspaces.com/uploads/${file.walletAddress}/${file.filename}`}
                                             download={file.filename}
                                             className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Download

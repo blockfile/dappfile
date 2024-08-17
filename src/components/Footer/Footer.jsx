@@ -7,7 +7,7 @@ function Footer() {
         <div className="flex flex-col justify-center items-center   text-white text-center font-anta  pb-2">
             <div className=" absolute bottom-10 left-0 right-0 flex justify-center items-center space-x-7  ">
                 <a
-                    href="https://t.me/etherfiles"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-2xl">
@@ -21,7 +21,7 @@ function Footer() {
                     <FaTwitter />
                 </a>
                 <a
-                    href="https://etherfile-ai.com/"
+                    href="https://fileum.xyz/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-2xl">
@@ -30,7 +30,7 @@ function Footer() {
             </div>
 
             <div className=" bottom-2 left-0 right-0 mt-5 absolute  text-xs ">
-                <span> ©2024 ETHERFILE | All Rights Reserved | V1.1.0</span>
+                <span> ©2024 FILEUM | All Rights Reserved | V2.1.0</span>
             </div>
         </div>
     );

@@ -224,7 +224,7 @@ function Navbar() {
                         />
                         <div className="my-auto">
                             <Link to="/">
-                                <span className=" text-3xl">ETHERFILE</span>
+                                <span className=" text-3xl">FILEUM</span>
                             </Link>
                         </div>
                         <div className="md:hidden absolute right-0 pr-4 mt-2">

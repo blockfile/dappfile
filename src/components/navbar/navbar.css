@@ -24,7 +24,7 @@ nav .profile-area {
     gap: 4rem;
 }
 nav:hover {
-    background-color: #ad28d6; /* This is the new background color */
+    background-color: #3553d8; /* This is the new background color */
     transition: background-color 0.5s ease; /* Smooth transition for background color */
 }
 nav .profile-area .theme-btn {
