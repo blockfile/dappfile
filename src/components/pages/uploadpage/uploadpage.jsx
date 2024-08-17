@@ -170,7 +170,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://app.fileum.xyz/api/files?walletAddress=${account}`
+                    `https://dapp.fileum.xyz/api/files?walletAddress=${account}`
                 );
                 console.log(response.data); // Log to see the data structure
                 setFiles(response.data);
@@ -202,7 +202,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://app.fileum.xyz/api/totalSize?walletAddress=${account}`
+                    `https://dapp.fileum.xyz/api/totalSize?walletAddress=${account}`
                 );
                 const { totalSize } = response.data;
                 setTotalUploadedSize(totalSize);
@@ -307,7 +307,7 @@ function UploadPage() {
 
                 try {
                     await axios.post(
-                        "https://app.fileum.xyz/api/upload",
+                        "https://dapp.fileum.xyz/api/upload",
                         formData,
                         {
                             headers: {
@@ -422,7 +422,7 @@ function UploadPage() {
 
         try {
             const response = await axios.post(
-                "https://app.fileum.xyz/api/delete-multiple",
+                "https://dapp.fileum.xyz/api/delete-multiple",
                 { fileIds },
                 {
                     headers: {
@@ -463,7 +463,7 @@ function UploadPage() {
         if (file) {
             // Assuming the download URL is something like 'https://dapp.blockfile.xyz/download/{fileId}'
             // Adjust this URL structure as needed for your app
-            const downloadUrl = `https://app.fileum.xyz/download/${fileId}`;
+            const downloadUrl = `https://dapp.fileum.xyz/download/${fileId}`;
 
             // Use the navigator.clipboard API to copy the download URL to the clipboard
             navigator.clipboard

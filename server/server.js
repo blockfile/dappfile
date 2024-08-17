@@ -26,7 +26,7 @@ const upload = multer({
 
 const corsOptions = {
     origin: [
-        "https://app.fileum.xyz",
+        "https://dapp.fileum.xyz",
         "http://localhost:3000",
         "http://146.190.98.94:3000",
     ], // Add your production and development URLs here
@@ -105,7 +105,7 @@ app.delete("/api/delete/:filename", async (req, res) => {
         const filePath = `uploads/${file.walletAddress}/${filename}`;
 
         const deleteParams = {
-            Bucket: "web3storage",
+            Bucket: "fileumstorage",
             Key: filePath,
         };
 
@@ -146,7 +146,7 @@ app.post("/api/delete-multiple", async (req, res) => {
             // Asynchronously delete from DigitalOcean Spaces
             await new Promise((resolve, reject) => {
                 s3.deleteObject(
-                    { Bucket: "web3storage", Key: fileKey },
+                    { Bucket: "fileumstorage", Key: fileKey },
                     (err, data) => {
                         if (err) {
                             console.error(
@@ -204,7 +204,7 @@ app.post("/api/create-folder", upload.none(), async (req, res) => {
     const folderPath = `uploads/${walletAddress}/${folderName}/`;
 
     const params = {
-        Bucket: "web3storage",
+        Bucket: "fileumstorage",
         Key: folderPath,
         ACL: "public-read",
     };
@@ -243,7 +243,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     const contentDisposition = `attachment; filename="${originalname}"`;
 
     const params = {
-        Bucket: "web3storage",
+        Bucket: "fileumstorage",
         Key: `uploads/${filePath}`,
         Body: req.file.buffer,
         ACL: "public-read",
