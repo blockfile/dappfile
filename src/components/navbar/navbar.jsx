@@ -265,7 +265,7 @@ function Navbar() {
                                             {tokenBalance.toFixed(0)}
                                         </span>
                                         <span className="  text-xl shadow-2xl mb-1 ">
-                                            ETF
+                                            FILEUM
                                         </span>
                                     </div>
                                 </li>
@@ -311,7 +311,7 @@ function Navbar() {
                                     className=" h-12  my-auto "
                                 />
                                 <div className="my-auto">
-                                    <span className=" text-3xl">BLOCKFILE</span>
+                                    <span className=" text-3xl">FILEUM</span>
                                 </div>
                             </div>
                         </div>
@@ -348,7 +348,7 @@ function Navbar() {
                                             {tokenBalance.toFixed(0)}
                                         </span>
                                         <span className="text-xl shadow-2xl">
-                                            ETF
+                                            FILEUM
                                         </span>
                                     </div>
                                 </li>

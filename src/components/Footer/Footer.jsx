@@ -10,26 +10,26 @@ function Footer() {
                     href=""
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-2xl">
+                    className="text-2xl text-blue-700">
                     <FaTelegram />
                 </a>
                 <a
                     href=""
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-2xl">
+                    className="text-2xl text-blue-700">
                     <FaTwitter />
                 </a>
                 <a
                     href="https://fileum.xyz/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-2xl">
+                    className="text-2xl text-blue-700">
                     <BsGlobe />
                 </a>
             </div>
 
-            <div className=" bottom-2 left-0 right-0 mt-5 absolute  text-xs ">
+            <div className=" bottom-2 left-0 right-0 mt-5 absolute  text-xs text-blue-700 ">
                 <span> ©2024 FILEUM | All Rights Reserved | V2.1.0</span>
             </div>
         </div>

@@ -62,7 +62,7 @@ function Main() {
                 setShowLoading(true);
                 setTimeout(() => {
                     setShowLoading(false);
-                    navigate("/");
+                    window.location.href = "https://fileum.xyz/"; // Navigate to external link
                 }, 5000);
             } else if (inputValue === "2") {
                 setGreetings((prev) => [
@@ -84,10 +84,10 @@ function Main() {
     return (
         <div className="bg3 sm:overflow-hidden h-screen flex flex-col">
             <Navbar />
-            <div className="flex-grow flex items-center justify-center flip-container">
+            <div className="flex-grow flex items-center justify-center flip-container mx-3  ">
                 <div className={`flipper ${showAbout ? "flip" : ""}`}>
-                    <div className="front w-[500px] h-[500px] bg-black flex flex-col justify-between rounded-b-lg mx-2 bg-opacity-40 rounded-t-lg">
-                        <div className=" bg-slate-500 py-1 font-Mono flex justify-center space-x-4 rounded-t-xl">
+                    <div className="front w-[500px] h-[500px] bg-black flex flex-col justify-between rounded-b-lg  bg-opacity-40 rounded-t-lg">
+                        <div className=" bg-blue-700 py-1 font-Mono  flex justify-center space-x-4 rounded-t-xl">
                             <span>//FILEUM.EXE</span>
                             <div className="animate-spin">
                                 <span>/</span>
@@ -96,7 +96,7 @@ function Main() {
                         <div className="flex-grow text-white mx-2 mt-2 text-justify overflow-auto">
                             {greetings.map((greeting, index) => (
                                 <div key={index} className="font-Mono">
-                                    <span className="text-green-500">
+                                    <span className="text-blue-700">
                                         {fileum}
                                     </span>
                                     {greeting}

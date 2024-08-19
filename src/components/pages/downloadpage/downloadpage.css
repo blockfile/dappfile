@@ -3,14 +3,7 @@
 }
 
 .bg {
-    background-image: linear-gradient(
-        to bottom,
-        #2a3024,
-        #1c2824,
-        #162021,
-        #141719,
-        #0d0d0d
-    );
+    background-color: rgb(253, 253, 253);
     position: absolute;
     z-index: 0;
     width: 100%;
