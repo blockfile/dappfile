@@ -781,7 +781,7 @@ function UploadPage() {
                                     <div className="sm:mx-2 sm:my-2 md:mx-24 md:my-24">
                                         {uploadQueue.map((fileData, index) => (
                                             <div key={index} className="mb-4">
-                                                <div className="flex justify-between items-center space-x-2">
+                                                <div className="flex justify-between items-center space-x-2 text-white">
                                                     <div className=" filename ">
                                                         {fileData.file.name}
                                                     </div>
@@ -791,7 +791,7 @@ function UploadPage() {
                                                                 index
                                                             )
                                                         }
-                                                        className="text-red-500 hover:text-red-700 mr-2">
+                                                        className="text-red-500 hover:text-red-700 mr-2 ">
                                                         X
                                                     </button>
                                                 </div>
@@ -813,7 +813,7 @@ function UploadPage() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="text-center text-sm">
+                                                <div className="text-center text-white text-sm">
                                                     {fileData.status ===
                                                         "uploading" &&
                                                         "Uploading..."}
