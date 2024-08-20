@@ -102,11 +102,9 @@ function Navbar() {
     };
 
     const connectOKXWallet = async () => {
-        // Check if the OKX Wallet is installed
         if (typeof window.okxwallet !== "undefined") {
             console.log("OKX Wallet is installed!");
             try {
-                // Use the OKX Wallet ethereum provider
                 const accounts = await window.okxwallet.request({
                     method: "eth_requestAccounts",
                 });
@@ -127,9 +125,9 @@ function Navbar() {
         // Initialize a WalletConnectProvider
         const provider = new WalletConnectProvider({
             rpc: {
-                56: "https://bsc-dataseed.binance.org/", // BSC Mainnet
+                8453: "https://mainnet.base.org", // Base Mainnet RPC URL
             },
-            chainId: 56, // BSC Mainnet Chain ID
+            chainId: 8453, // Base Mainnet Chain ID
             bridge: "https://bridge.walletconnect.org", // Default bridge
         });
 
