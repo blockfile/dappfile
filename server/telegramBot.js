@@ -69,7 +69,7 @@ const getTotalUploadedSize = async (walletAddress) => {
 
 async function showMainMenu(chatId) {
     const user = await User.findOne({ chatId });
-    let buttons = [[{ text: "Upload File", callback_data: "upload" }]];
+    let buttons = [];
 
     if (user && user.walletAddress) {
         const balance = await fetchTokenBalance(user.walletAddress);
@@ -78,6 +78,8 @@ async function showMainMenu(chatId) {
             user.walletAddress
         );
         const remainingSize = uploadLimit - totalUploadedSize;
+
+        buttons.push([{ text: "Upload File", callback_data: "upload" }]);
 
         buttons.push([
             {
