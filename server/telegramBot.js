@@ -30,10 +30,7 @@ const s3 = new AWS.S3({
 });
 
 mongoose
-    .connect(process.env.DATABASE_ACCESS, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    .connect(process.env.DATABASE_ACCESS)
     .then(() => console.log("MongoDB connected..."))
     .catch((err) => console.log("MongoDB connection error:", err));
 
