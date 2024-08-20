@@ -7,14 +7,14 @@ function Footer() {
         <div className="flex flex-col justify-center items-center   text-white text-center font-anta  pb-2">
             <div className=" absolute bottom-10 left-0 right-0 flex justify-center items-center space-x-7  ">
                 <a
-                    href=""
+                    href="https://t.me/FileumPortal"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-2xl text-blue-700">
                     <FaTelegram />
                 </a>
                 <a
-                    href=""
+                    href="https://x.com/Fileum_"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-2xl text-blue-700">
