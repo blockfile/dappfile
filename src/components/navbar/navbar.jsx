@@ -36,9 +36,9 @@ function Navbar() {
 
     // Function to fetch token balance from BscScan
     const fetchTokenBalance = async (walletAddress) => {
-        const apiKey = "9IQVWBVV4U8DX8YI7EC56F3HBYJEE1EWNX"; // Replace with your BscScan API key
-        const contractAddress = "0x2d4531984368ab56d71f8f5ed52c6fd383f9f278"; // The contract address for the token
-        const url = `https://api.basechainexplorer.com/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
+        const apiKey = "9IQVWBVV4U8DX8YI7EC56F3HBYJEE1EWNX";
+        const contractAddress = "0x2d4531984368ab56d71f8f5ed52c6fd383f9f278";
+        const url = `https://api.basescan.org/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
 
         try {
             const response = await axios.get(url);

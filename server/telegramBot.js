@@ -37,12 +37,12 @@ mongoose
     .then(() => console.log("MongoDB connected..."))
     .catch((err) => console.log("MongoDB connection error:", err));
 
-const bannerUrl = "../src/components/assets/Images/bannereth.png"; // Replace with your banner image URL
+const bannerUrl = "../src/components/assets/Images/banner.jpg"; // Replace with your banner image URL
 
 const fetchTokenBalance = async (walletAddress) => {
-    const apiKey = "FUMHTQE96FPWIW79ZJFCIXFX5BPCGNQC7T"; // Replace with your BscScan API key
-    const contractAddress = "0x42F86030ec3dD31d75a8C1B806dFa8400d40A282"; // The contract address for the token
-    const url = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
+    const apiKey = "9IQVWBVV4U8DX8YI7EC56F3HBYJEE1EWNX"; // Replace with your BscScan API key
+    const contractAddress = "0x2d4531984368ab56d71f8f5ed52c6fd383f9f278"; // The contract address for the token
+    const url = `https://api.basescan.org/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
 
     try {
         const response = await axios.get(url);
@@ -56,13 +56,13 @@ const fetchTokenBalance = async (walletAddress) => {
 };
 
 const getUploadLimit = (balance) => {
-    if (balance < 10000) return 5 * 1024 * 1024; // 5MB
-    if (balance < 100001) return 10 * 1024 * 1024; // 10MB
-    if (balance < 500001) return 100 * 1024 * 1024; // 100MB
-    if (balance < 1000001) return 500 * 1024 * 1024; // 500MB
-    if (balance < 1500001) return 1 * 1024 * 1024 * 1024; // 1GB
-    if (balance < 2000001) return 5 * 1024 * 1024 * 1024; // 5GB
-    return 10 * 1024 * 1024 * 1024; // 10GB
+    if (balance <= 0) return 50 * 1024 * 1024; // Default 50MB for 0 or negative balances
+    if (balance < 100_000) return 100 * 1024 * 1024; // 100MB
+    if (balance < 1_000_001) return 1 * 1024 * 1024 * 1024; // 1GB
+    if (balance < 5_000_001) return 5 * 1024 * 1024 * 1024; // 5GB
+    if (balance < 15_000_001) return 10 * 1024 * 1024 * 1024; // 10GB
+    if (balance < 30_000_001) return 50 * 1024 * 1024 * 1024; // 50GB
+    return 100 * 1024 * 1024 * 1024; // 100GB
 };
 
 const getTotalUploadedSize = async (walletAddress) => {
@@ -84,7 +84,7 @@ async function showMainMenu(chatId) {
 
         buttons.push([
             {
-                text: `Token balance: ${balance} ETF\nUpload limit: ${(
+                text: `Token balance: ${balance} FILEUM\nUpload limit: ${(
                     uploadLimit /
                     (1024 * 1024)
                 ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -108,7 +108,7 @@ async function showMainMenu(chatId) {
         {
             type: "photo",
             media: bannerUrl,
-            caption: "Welcome to ETHERFILE?",
+            caption: "Welcome to FILEUM",
         },
     ];
 
@@ -167,7 +167,7 @@ bot.on("callback_query", async (callbackQuery) => {
                     chatId,
                     `Current wallet address: ${
                         user.walletAddress
-                    }\nToken balance: ${balance} ETF\nUpload limit: ${(
+                    }\nToken balance: ${balance} FILEUM\nUpload limit: ${(
                         uploadLimit /
                         (1024 * 1024)
                     ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -409,7 +409,7 @@ bot.on("message", async (msg) => {
             const filePath = `uploads/${walletAddress}/${fileName}`;
 
             const params = {
-                Bucket: "web3storage",
+                Bucket: "fileumstorage",
                 Key: filePath,
                 Body: buffer,
                 ACL: "public-read",
