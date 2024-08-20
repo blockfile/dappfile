@@ -137,19 +137,19 @@ function UploadPage() {
 
         if (tokenBalance >= 30000001 && tokenBalance <= 100000000) {
             // 3% of 1 billion
-            newSize = 10 * 1024 * 1024 * 1024; // 10GB
+            newSize = 100 * 1024 * 1024 * 1024; // 100GB
         } else if (tokenBalance >= 15000001 && tokenBalance <= 30000000) {
-            newSize = 5 * 1024 * 1024 * 1024; // 5GB
+            newSize = 50 * 1024 * 1024 * 1024; // 50GB
         } else if (tokenBalance >= 5000001 && tokenBalance <= 15000000) {
-            newSize = 1 * 1024 * 1024 * 1024; // 1GB
+            newSize = 10 * 1024 * 1024 * 1024; // 10GB
         } else if (tokenBalance >= 1000001 && tokenBalance <= 5000000) {
-            newSize = 500 * 1024 * 1024; // 500MB
+            newSize = 5 * 1024 * 1024 * 1024; // 5GB
         } else if (tokenBalance >= 100001 && tokenBalance <= 1000000) {
-            newSize = 100 * 1024 * 1024; // 100MB
+            newSize = 1 * 1024 * 1024 * 1024; // 1GB
         } else if (tokenBalance >= 1 && tokenBalance <= 100000) {
-            newSize = 10 * 1024 * 1024; // 10MB
+            newSize = 100 * 1024 * 1024; // 100MB
         } else {
-            newSize = 5 * 1024 * 1024; // Default to 5MB for 0 or negative token balances
+            newSize = 50 * 1024 * 1024; // Default to 50MB for 0 or negative token balances
         }
 
         setMaxUploadSize(newSize);
