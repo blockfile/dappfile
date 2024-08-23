@@ -45,9 +45,7 @@ const fileTypeIcons = {
     whm: <FaFileVideo />,
     mov: <FaFileVideo />,
     avi: <FaFileVideo />,
-
     wmv: <FaFileVideo />,
-
     mp3: <FaFileAudio />,
     wav: <FaFileAudio />,
     aac: <FaFileAudio />,
@@ -67,7 +65,6 @@ const fileTypeIcons = {
     tar: <FaFileArchive />,
     gz: <FaFileArchive />,
     bz2: <FaFileArchive />,
-
     // Add or remove file types as needed
 };
 
@@ -85,7 +82,7 @@ function UploadPage() {
     const { tokenBalance } = useContext(TokenContext);
     const [maxUploadSize, setMaxUploadSize] = useState(5 * 1024 * 1024 * 1024); // Default to 5GB
     const [windowSize, setWindowSize] = useState(window.innerWidth);
-    const isWalletConnected = account && window.ethereum;
+    const isWalletConnected = Boolean(account);
 
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
     const [messageIndex, setMessageIndex] = useState(0);
@@ -103,7 +100,6 @@ function UploadPage() {
                 if (currentCharIndex < currentMessage.length) {
                     timer = setTimeout(() => {
                         setGreetings((prevGreetings) => {
-                            // Create a new array or append characters as before
                             const updatedGreetings = [...prevGreetings];
                             if (prevGreetings.length === messageIndex) {
                                 updatedGreetings.push(
@@ -121,8 +117,7 @@ function UploadPage() {
                     setCurrentCharIndex(0);
                     setMessageIndex(messageIndex + 1);
                 } else {
-                    // Typing completed for all messages
-                    setStartTyping(false); // Reset to allow re-triggering
+                    setStartTyping(false);
                     setCurrentCharIndex(0);
                     setMessageIndex(0);
                 }
@@ -132,11 +127,10 @@ function UploadPage() {
     }, [currentCharIndex, messageIndex, messages, startTyping]);
 
     useEffect(() => {
-        console.log("Updated tokenBalance: ", tokenBalance); // For debugging
+        console.log("Updated tokenBalance: ", tokenBalance);
         let newSize;
 
         if (tokenBalance >= 30000001 && tokenBalance <= 100000000) {
-            // 3% of 1 billion
             newSize = 100 * 1024 * 1024 * 1024; // 100GB
         } else if (tokenBalance >= 15000001 && tokenBalance <= 30000000) {
             newSize = 50 * 1024 * 1024 * 1024; // 50GB
@@ -155,24 +149,10 @@ function UploadPage() {
         setMaxUploadSize(newSize);
     }, [tokenBalance]);
 
-    console.log(tokenBalance);
-    useEffect(() => {
-        const fetchWalletAddress = async () => {
-            const accounts = await window.ethereum?.request({
-                method: "eth_accounts",
-            });
-            if (accounts?.length > 0) {
-                setAccount(accounts[0]);
-            }
-        };
-
-        fetchWalletAddress();
-    }, []);
     useEffect(() => {
         const checkTronLink = async () => {
             const tronWeb = window.tronWeb;
             if (tronWeb && tronWeb.ready) {
-                // TronLink is installed and a wallet is connected
                 if (tronWeb.defaultAddress.base58) {
                     setAccount(tronWeb.defaultAddress.base58);
                 }
@@ -228,7 +208,7 @@ function UploadPage() {
                 const response = await axios.get(
                     `https://dapp.tronfile.xyz/api/files?walletAddress=${account}`
                 );
-                console.log(response.data); // Log to see the data structure
+                console.log(response.data);
                 setFiles(response.data);
             } catch (error) {
                 console.error("Error fetching files:", error);
@@ -250,10 +230,12 @@ function UploadPage() {
             document.removeEventListener("contextmenu", handleRightClick);
         };
     }, []);
+
     const recalculateUploadPercentage = async () => {
-        await fetchTotalUploadedSize(); // Fetch the updated total uploaded size
-        fetchFiles(); // Fetch the updated files list
+        await fetchTotalUploadedSize();
+        fetchFiles();
     };
+
     const fetchTotalUploadedSize = async () => {
         if (account) {
             try {
@@ -264,10 +246,11 @@ function UploadPage() {
                 setTotalUploadedSize(totalSize);
             } catch (error) {
                 console.error("Error fetching total uploaded size:", error);
-                setTotalUploadedSize(0); // Reset to 0 in case of error
+                setTotalUploadedSize(0);
             }
         }
     };
+
     useEffect(() => {
         fetchTotalUploadedSize();
     }, [account]);
@@ -284,7 +267,7 @@ function UploadPage() {
                 status: "queued",
                 cancelToken: token,
                 cancel,
-                messageIndex: greetings.length, // store the index of the message
+                messageIndex: greetings.length,
             };
         });
         setUploadQueue((prevQueue) => [...prevQueue, ...newQueue]);
@@ -296,7 +279,7 @@ function UploadPage() {
         fileData.progress = progress;
 
         const newGreetings = [...greetings];
-        const slashes = "/".repeat(progress / 10); // One slash for each 10% completed
+        const slashes = "/".repeat(progress / 10);
         newGreetings[
             fileData.messageIndex
         ] = `//TRONFILE: ${fileData.file.name} ${slashes}`;
@@ -311,21 +294,15 @@ function UploadPage() {
         }, 0);
         setTotalUploadedSize(totalSize);
     };
+
     const updateFileStatus = (index, status) => {
         setUploadQueue((currentQueue) =>
             currentQueue.map((file, i) =>
                 i === index ? { ...file, status } : file
             )
         );
-        // Add this line to update the total uploaded size whenever a file's status is updated
         updateTotalUploadedSize();
     };
-    // const handleFolderChange = (event) => {
-    //     const files = Array.from(event.target.files); // Convert FileList to Array
-    //     console.log(files); // Optional: Log the files to be uploaded
-    //     // Update state or variables for upload process
-    //     setSelectedFiles(files); // Assuming setSelectedFiles is your method to update state
-    // };
 
     const toggleFileSelection = (fileId) => {
         const newSelection = new Set(selectedFiles);
@@ -340,16 +317,14 @@ function UploadPage() {
     const handleUpload = async () => {
         let allUploadsCompleted = true;
 
-        // Calculate the size of files being uploaded
         const filesToUploadSize = uploadQueue.reduce(
             (acc, fileData) => acc + fileData.file.size,
             0
         );
 
-        // Check if adding these files would exceed the max upload size
         if (totalUploadedSize + filesToUploadSize > maxUploadSize) {
             alert("You have exceeded your allocated upload space.");
-            return; // Stop the upload process
+            return;
         }
 
         for (let i = 0; i < uploadQueue.length; i++) {
@@ -407,7 +382,6 @@ function UploadPage() {
                 clearInterval(checkUploadCompletion);
                 if (allUploadsCompleted) {
                     alert("All files have been uploaded successfully!");
-
                     fetchFiles();
                 } else {
                     alert("Some files were not uploaded successfully.");
@@ -421,7 +395,7 @@ function UploadPage() {
         if (selectedFiles.has(fileId) || selectedFiles.size > 0) {
             const selectedFileIds =
                 selectedFiles.size > 1 ? [...selectedFiles] : [fileId];
-            setContextMenuFileIds(selectedFileIds); // Update to use the new state
+            setContextMenuFileIds(selectedFileIds);
 
             const menu = contextMenuRef.current;
             menu.style.top = `${event.clientY}px`;
@@ -438,16 +412,16 @@ function UploadPage() {
     };
 
     useEffect(() => {
-        // Check if all files in the queue have a status of 'done', 'error', or 'cancelled'
         const allUploadsCompleted = uploadQueue.every((file) =>
             ["done", "error", "cancelled"].includes(file.status)
         );
 
         if (allUploadsCompleted && uploadQueue.length > 0) {
-            fetchFiles(); // Refresh the file list
-            fetchTotalUploadedSize(); // Update the total uploaded size
+            fetchFiles();
+            fetchTotalUploadedSize();
         }
     }, [uploadQueue]);
+
     const removeFileFromQueue = (indexToRemove) => {
         const fileData = uploadQueue[indexToRemove];
 
@@ -456,7 +430,7 @@ function UploadPage() {
                 "Do you want to cancel uploading?"
             );
             if (confirmCancel) {
-                fileData.cancel("Upload cancelled by the user."); // Cancel the upload
+                fileData.cancel("Upload cancelled by the user.");
                 setUploadQueue((currentQueue) =>
                     currentQueue.filter((_, index) => index !== indexToRemove)
                 );
@@ -488,11 +462,9 @@ function UploadPage() {
             );
 
             if (response.data.success) {
-                // Update local state to reflect the deletion
                 setFiles((prevFiles) =>
                     prevFiles.filter((file) => !selectedFiles.has(file._id))
                 );
-                // Clear selection after deletion
                 await recalculateUploadPercentage();
                 setSelectedFiles(new Set());
                 alert("Selected files deleted successfully!");
@@ -507,20 +479,15 @@ function UploadPage() {
     };
 
     const moveFile = (fileId) => {
-        // Placeholder logic for moving a file
         console.log("Move File", fileId);
         hideContextMenu();
-        // You might display a modal for the user to select a new folder or similar
     };
 
     const copyLink = (fileId) => {
-        // Find the file object based on fileId
         const file = files.find((f) => f._id === fileId);
         if (file) {
-            // Adjust this URL structure as needed for your app
             const downloadUrl = `https://dapp.tronfile.xyz/download/${fileId}`;
 
-            // Use the navigator.clipboard API to copy the download URL to the clipboard
             navigator.clipboard
                 .writeText(downloadUrl)
                 .then(() => alert("Link copied to clipboard!"))
@@ -546,31 +513,28 @@ function UploadPage() {
     }, []);
 
     const closeModal = () => {
-        // Check if all files are done uploading
         const allDone = uploadQueue.every((file) => file.status === "done");
 
-        // Reset states when modal is closed
         setGreetings([]);
         setCurrentCharIndex(0);
         setMessageIndex(0);
-        setStartTyping(false); // If you are using this to control typing
+        setStartTyping(false);
 
         setIsModalOpen(false);
         if (allDone || window.confirm("Do you want to clear your selection?")) {
-            setUploadQueue([]); // Clear the upload queue
+            setUploadQueue([]);
         }
-        fetchFiles(); // Fetch latest files list after modal close
+        fetchFiles();
     };
 
     const handleUploadButtonClick = () => {
-        // Toggle the state to show/hide the modal
         setIsModalOpen(!isModalOpen);
         setStartTyping(true);
     };
-    const handleIconClick = () => {
-        fileInputRef.current.click(); // Triggers the file input click
 
-        // Check if the "Adding Files..." message is already present to avoid duplication
+    const handleIconClick = () => {
+        fileInputRef.current.click();
+
         const addingFilesMessage = "Adding Files...";
         if (!greetings.includes(addingFilesMessage)) {
             setGreetings((prevGreetings) => [
@@ -579,10 +543,9 @@ function UploadPage() {
             ]);
         }
 
-        // Optionally, manage typing animation reset here
         setStartTyping(true);
         setCurrentCharIndex(0);
-        setMessageIndex(greetings.length); // Update message index to handle new messages correctly
+        setMessageIndex(greetings.length);
     };
 
     function formatFileSize(bytes) {
@@ -592,14 +555,16 @@ function UploadPage() {
             return (bytes / 1024 / 1024).toFixed(2) + " MB";
         else return (bytes / 1024 / 1024 / 1024).toFixed(2) + " GB";
     }
+
     const handleSelectAll = (e) => {
         if (e.target.checked) {
             const allFileIds = new Set(files.map((file) => file._id));
             setSelectedFiles(allFileIds);
         } else {
-            setSelectedFiles(new Set()); // Deselect all
+            setSelectedFiles(new Set());
         }
     };
+
     const uploadPercentage = Math.min(
         100,
         (totalUploadedSize / maxUploadSize) * 100
@@ -616,19 +581,19 @@ function UploadPage() {
 
     return (
         <div>
-            <div className=" bg2 text-white h-screen font-anta   ">
+            <div className=" bg2 text-white h-screen font-anta">
                 <Navbar />
                 <div className="flex">
                     <div className="w-full p-4">
-                        <div className=" md:flex justify-between mx-6 my-2 ">
-                            <div className="mt-3  ">
-                                <span className="text-lg font-Mono ">
+                        <div className=" md:flex justify-between mx-6 my-2">
+                            <div className="mt-3">
+                                <span className="text-lg font-Mono">
                                     My Files
                                 </span>
                             </div>
 
                             <div className="md:flex sm:space-y-4 space-x-4">
-                                <div className=" font-Mono">
+                                <div className="font-Mono">
                                     <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 mt-2">
                                         <div
                                             className="bg-blue-600 h-2.5 rounded-full"
@@ -650,7 +615,7 @@ function UploadPage() {
                                         MB)
                                     </div>
                                 </div>
-                                <div className=" font-Mono">
+                                <div className="font-Mono">
                                     <button
                                         onClick={handleUploadButtonClick}
                                         className={`${
@@ -664,12 +629,12 @@ function UploadPage() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex  mx-6 my-2 space-x-4  font-Mono">
-                            <div className=" ">
-                                <div className=" ">
+                        <div className="flex mx-6 my-2 space-x-4 font-Mono">
+                            <div className="">
+                                <div className="">
                                     <input
                                         type="checkbox"
-                                        className="form-checkbox accent-green-500 "
+                                        className="form-checkbox accent-green-500"
                                         onChange={handleSelectAll}
                                         checked={
                                             files.length > 0 &&
@@ -688,7 +653,7 @@ function UploadPage() {
                                     : "Please connect your TRON wallet first."}
                             </div>
                         ) : (
-                            <div className="files-table-container md:max-h-[750px] overflow-y-auto sm:max-h-[600px] bg-black   font-Mono rounded-t-xl">
+                            <div className="files-table-container md:max-h-[750px] overflow-y-auto sm:max-h-[600px] bg-black font-Mono rounded-t-xl">
                                 <div className=" bg-slate-500 flex justify-center space-x-4">
                                     <span className="my-auto">
                                         //TRONFILE.EXE
@@ -698,13 +663,13 @@ function UploadPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <table className="min-w-full table-command-line ">
+                                    <table className="min-w-full table-command-line">
                                         <tbody>
                                             {Array.isArray(files) &&
                                                 files.map((file, idx) => (
                                                     <tr
                                                         key={file.fileId}
-                                                        className={` hover:bg-slate-700  border-gray-700 ${
+                                                        className={` hover:bg-slate-700 border-gray-700 ${
                                                             selectedFiles.has(
                                                                 file._id
                                                             )
@@ -722,8 +687,8 @@ function UploadPage() {
                                                                 file._id
                                                             )
                                                         }>
-                                                        <td className="px-6 text-sm font-medium text-left table-cell ">
-                                                            <div className="flex items-center space-x-3 ">
+                                                        <td className="px-6 text-sm font-medium text-left table-cell">
+                                                            <div className="flex items-center space-x-3">
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={selectedFiles.has(
@@ -775,7 +740,7 @@ function UploadPage() {
                                                         </td>
                                                         <td className="text-xs text-gray-500"></td>
                                                         <td className="text-xs text-gray-500 space-x-6 table-cell">
-                                                            <span className="file-size text-xs text-gray-400 ">
+                                                            <span className="file-size text-xs text-gray-400">
                                                                 {formatFileSize(
                                                                     file.size
                                                                 )}
@@ -818,7 +783,7 @@ function UploadPage() {
                     )}
                 </div>
                 {isModalOpen && (
-                    <div className="fixed inset-0 backdrop-blur-sm   z-50 flex justify-center items-center ">
+                    <div className="fixed inset-0 backdrop-blur-sm z-50 flex justify-center items-center">
                         <div className=" bg-black p-4 rounded-2xl shadow-lg ">
                             <div>
                                 <button
@@ -828,7 +793,7 @@ function UploadPage() {
                                 </button>
                             </div>
 
-                            <div className=" overflow-y-auto max-h-[600px] files-table-container  ">
+                            <div className=" overflow-y-auto max-h-[600px] files-table-container">
                                 {uploadQueue.length > 0 ? (
                                     <div className="sm:mx-2 sm:my-2 md:mx-24 md:my-24">
                                         {uploadQueue.map((fileData, index) => (
@@ -915,7 +880,7 @@ function UploadPage() {
                                         <input
                                             ref={fileInputRef}
                                             type="file"
-                                            multiple // Allow multiple file selection
+                                            multiple
                                             onChange={handleFileChange}
                                             className="hidden"
                                         />
