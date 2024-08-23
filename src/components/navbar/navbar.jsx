@@ -222,7 +222,7 @@ function Navbar() {
                         />
                         <div className="my-auto">
                             <Link to="/">
-                                <span className=" text-3xl">FILEUM</span>
+                                <span className=" text-3xl">TRONFILE</span>
                             </Link>
                         </div>
                         <div className="md:hidden absolute right-0 pr-4 mt-2">
@@ -263,7 +263,7 @@ function Navbar() {
                                             {tokenBalance.toFixed(0)}
                                         </span>
                                         <span className="  text-xl shadow-2xl mb-1 ">
-                                            FILEUM
+                                            TRONFILE
                                         </span>
                                     </div>
                                 </li>
@@ -309,7 +309,7 @@ function Navbar() {
                                     className=" h-12  my-auto "
                                 />
                                 <div className="my-auto">
-                                    <span className=" text-3xl">FILEUM</span>
+                                    <span className=" text-3xl">TRONFILE</span>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +346,7 @@ function Navbar() {
                                             {tokenBalance.toFixed(0)}
                                         </span>
                                         <span className="text-xl shadow-2xl">
-                                            FILEUM
+                                            TRONFILE
                                         </span>
                                     </div>
                                 </li>

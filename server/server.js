@@ -26,7 +26,7 @@ const upload = multer({
 
 const corsOptions = {
     origin: [
-        "https://dapp.fileum.xyz",
+        "https://dapp.tronfile.xyz",
         "http://localhost:3000",
         "http://152.42.164.187:3000",
     ], // Add your production and development URLs here

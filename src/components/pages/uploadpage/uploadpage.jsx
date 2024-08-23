@@ -93,7 +93,7 @@ function UploadPage() {
     const [startTyping, setStartTyping] = useState(false);
 
     const messages = ["Please select file you want to upload."];
-    const fileum = "//FILEUMBOT: ";
+    const tronfile = "//TRONFILEBOT: ";
 
     useEffect(() => {
         let timer;
@@ -173,7 +173,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://dapp.fileum.xyz/api/files?walletAddress=${account}`
+                    `https://dapp.tronfile.xyz/api/files?walletAddress=${account}`
                 );
                 console.log(response.data); // Log to see the data structure
                 setFiles(response.data);
@@ -205,7 +205,7 @@ function UploadPage() {
         if (account) {
             try {
                 const response = await axios.get(
-                    `https://dapp.fileum.xyz/api/totalSize?walletAddress=${account}`
+                    `https://dapp.tronfile.xyz/api/totalSize?walletAddress=${account}`
                 );
                 const { totalSize } = response.data;
                 setTotalUploadedSize(totalSize);
@@ -223,7 +223,7 @@ function UploadPage() {
         const selectedFiles = Array.from(event.target.files);
         const newQueue = selectedFiles.map((file) => {
             const { token, cancel } = axios.CancelToken.source();
-            const initialMessage = `//FILEUM: ${file.name} /`;
+            const initialMessage = `//TRONFILE: ${file.name} /`;
             setGreetings((prev) => [...prev, initialMessage]);
             return {
                 file,
@@ -246,7 +246,7 @@ function UploadPage() {
         const slashes = "/".repeat(progress / 10); // One slash for each 10% completed
         newGreetings[
             fileData.messageIndex
-        ] = `//FILEUM: ${fileData.file.name} ${slashes}`;
+        ] = `//TRONFILE: ${fileData.file.name} ${slashes}`;
 
         setUploadQueue(newQueue);
         setGreetings(newGreetings);
@@ -310,7 +310,7 @@ function UploadPage() {
 
                 try {
                     await axios.post(
-                        "https://dapp.fileum.xyz/api/upload",
+                        "https://dapp.tronfile.xyz/api/upload",
                         formData,
                         {
                             headers: {
@@ -425,7 +425,7 @@ function UploadPage() {
 
         try {
             const response = await axios.post(
-                "https://dapp.fileum.xyz/api/delete-multiple",
+                "https://dapp.tronfile.xyz/api/delete-multiple",
                 { fileIds },
                 {
                     headers: {
@@ -464,9 +464,8 @@ function UploadPage() {
         // Find the file object based on fileId
         const file = files.find((f) => f._id === fileId);
         if (file) {
-            // Assuming the download URL is something like 'https://dapp.blockfile.xyz/download/{fileId}'
             // Adjust this URL structure as needed for your app
-            const downloadUrl = `https://dapp.fileum.xyz/download/${fileId}`;
+            const downloadUrl = `https://dapp.tronfile.xyz/download/${fileId}`;
 
             // Use the navigator.clipboard API to copy the download URL to the clipboard
             navigator.clipboard
@@ -639,7 +638,7 @@ function UploadPage() {
                             <div className="files-table-container md:max-h-[750px] overflow-y-auto sm:max-h-[600px] bg-black   font-Mono rounded-t-xl">
                                 <div className=" bg-slate-500 flex justify-center space-x-4">
                                     <span className="my-auto">
-                                        //FILEUM.EXE
+                                        //TRONFILE.EXE
                                     </span>
                                     <div className="animate-spin">
                                         <span>/</span>
@@ -834,7 +833,7 @@ function UploadPage() {
                                     <div className="flex-grow flex items-center justify-center">
                                         <div className="lg:w-[500px] lg:h-[500px] md:w-[400px] md:h-[400px] sm:w-[300px] sm:h-[300px] bg-black flex flex-col justify-between rounded-b-lg mx-2 bg-opacity-40 rounded-t-lg">
                                             <div className="  py-1 font-Mono flex justify-center space-x-4 rounded-t-xl">
-                                                <span>//FILEUM.EXE</span>
+                                                <span>//TRONFILE.EXE</span>
                                                 <div className="animate-spin">
                                                     <span>/</span>
                                                 </div>
@@ -846,7 +845,7 @@ function UploadPage() {
                                                             key={index}
                                                             className="font-Mono">
                                                             <span className="text-green-500">
-                                                                {fileum}
+                                                                {tronfile}
                                                             </span>
                                                             {greeting}
                                                         </div>

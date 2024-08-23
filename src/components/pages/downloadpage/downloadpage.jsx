@@ -14,7 +14,7 @@ function DownloadPage() {
         const fetchFile = async () => {
             try {
                 const response = await axios.get(
-                    `https://dapp.fileum.xyz/api/files/${id}`
+                    `https://dapp.tronfile.xyz/api/files/${id}`
                 );
                 if (response.data) {
                     const formattedSize = (

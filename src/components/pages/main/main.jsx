@@ -15,12 +15,12 @@ function Main() {
     const [showAbout, setShowAbout] = useState(false);
     const navigate = useNavigate();
     const messages = [
-        " Welcome to FILEUM!",
+        " Welcome to TRONFILE!",
         "Please Enter your Command Selection:",
         "1: Back to Homepage.",
         "2: Go to dapp and start uploading.",
     ];
-    const fileum = "//FILEUMBOT: ";
+    const tronfile = "//TRONFILEBOT: ";
     const [showLoading, setShowLoading] = useState(false);
 
     useEffect(() => {
@@ -62,7 +62,7 @@ function Main() {
                 setShowLoading(true);
                 setTimeout(() => {
                     setShowLoading(false);
-                    window.location.href = "https://fileum.xyz/"; // Navigate to external link
+                    window.location.href = "https://tronfile.xyz"; // Navigate to external link
                 }, 5000);
             } else if (inputValue === "2") {
                 setGreetings((prev) => [
@@ -87,8 +87,8 @@ function Main() {
             <div className="flex-grow flex items-center justify-center flip-container mx-3  ">
                 <div className={`flipper ${showAbout ? "flip" : ""}`}>
                     <div className="front w-[500px] h-[500px] bg-black flex flex-col justify-between rounded-b-lg  bg-opacity-40 rounded-t-lg">
-                        <div className=" bg-blue-700 py-1 font-Mono  flex justify-center space-x-4 rounded-t-xl">
-                            <span>//FILEUM.EXE</span>
+                        <div className=" bg-red-600 py-1 font-Mono  flex justify-center space-x-4 rounded-t-xl">
+                            <span>//TRONFILE.EXE</span>
                             <div className="animate-spin">
                                 <span>/</span>
                             </div>
@@ -96,8 +96,8 @@ function Main() {
                         <div className="flex-grow text-white mx-2 mt-2 text-justify overflow-auto">
                             {greetings.map((greeting, index) => (
                                 <div key={index} className="font-Mono">
-                                    <span className="text-blue-700">
-                                        {fileum}
+                                    <span className="text-red-600">
+                                        {tronfile}
                                     </span>
                                     {greeting}
                                 </div>

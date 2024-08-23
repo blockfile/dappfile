@@ -83,7 +83,7 @@ async function showMainMenu(chatId) {
 
         buttons.push([
             {
-                text: `Token balance: ${balance} FILEUM\nUpload limit: ${(
+                text: `Token balance: ${balance} TRONFILE\nUpload limit: ${(
                     uploadLimit /
                     (1024 * 1024)
                 ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -107,7 +107,7 @@ async function showMainMenu(chatId) {
         {
             type: "photo",
             media: bannerUrl,
-            caption: "Welcome to FILEUM",
+            caption: "Welcome to TRONFILE",
         },
     ];
 
@@ -166,7 +166,7 @@ bot.on("callback_query", async (callbackQuery) => {
                     chatId,
                     `Current wallet address: ${
                         user.walletAddress
-                    }\nToken balance: ${balance} FILEUM\nUpload limit: ${(
+                    }\nToken balance: ${balance} TRONFILE\nUpload limit: ${(
                         uploadLimit /
                         (1024 * 1024)
                     ).toFixed(2)} MB\nTotal uploaded: ${(
