@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const axios = require("axios");
 const User = require("../server/model/user"); // Import the User model
-const File = require("../server/model/models"); // Import the UserFile model
+const File = require("../server/model/models"); // Import the File model
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
@@ -79,16 +79,31 @@ const getTotalUploadedSize = async (walletAddress) => {
     return files.reduce((total, file) => total + parseInt(file.size), 0);
 };
 
+async function getOrCreateUserWallet(chatId, newWalletAddress) {
+    let user = await User.findOne({ chatId });
+
+    if (!user) {
+        // If the user doesn't exist, create a new one
+        user = new User({ chatId, walletAddress: newWalletAddress });
+        await user.save();
+    } else if (!user.walletAddress) {
+        // If the user exists but doesn't have a wallet address, update it
+        user.walletAddress = newWalletAddress;
+        await user.save();
+    }
+
+    return user.walletAddress;
+}
+
 async function showMainMenu(chatId) {
     const user = await User.findOne({ chatId });
     let buttons = [];
 
     if (user && user.walletAddress) {
-        const balance = await fetchTokenBalance(user.walletAddress);
+        const walletAddress = user.walletAddress; // Use the stored wallet address
+        const balance = await fetchTokenBalance(walletAddress);
         const uploadLimit = getUploadLimit(balance);
-        const totalUploadedSize = await getTotalUploadedSize(
-            user.walletAddress
-        );
+        const totalUploadedSize = await getTotalUploadedSize(walletAddress);
         const remainingSize = uploadLimit - totalUploadedSize;
 
         buttons.push([{ text: "Upload File", callback_data: "upload" }]);
@@ -167,18 +182,17 @@ bot.on("callback_query", async (callbackQuery) => {
         case "settings":
             const user = await User.findOne({ chatId });
             if (user && user.walletAddress) {
-                const balance = await fetchTokenBalance(user.walletAddress);
+                const walletAddress = user.walletAddress;
+                const balance = await fetchTokenBalance(walletAddress);
                 const uploadLimit = getUploadLimit(balance);
                 const totalUploadedSize = await getTotalUploadedSize(
-                    user.walletAddress
+                    walletAddress
                 );
                 const remainingSize = uploadLimit - totalUploadedSize;
 
                 bot.sendMessage(
                     chatId,
-                    `Current wallet address: ${
-                        user.walletAddress
-                    }\nToken balance: ${balance} TRONFILE\nUpload limit: ${(
+                    `Current wallet address: ${walletAddress}\nToken balance: ${balance} TRONFILE\nUpload limit: ${(
                         uploadLimit /
                         (1024 * 1024)
                     ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -249,21 +263,18 @@ bot.on("callback_query", async (callbackQuery) => {
         case "refresh":
             const userRefresh = await User.findOne({ chatId });
             if (userRefresh && userRefresh.walletAddress) {
-                const balanceRefresh = await fetchTokenBalance(
-                    userRefresh.walletAddress
-                );
+                const walletAddress = userRefresh.walletAddress;
+                const balanceRefresh = await fetchTokenBalance(walletAddress);
                 const uploadLimitRefresh = getUploadLimit(balanceRefresh);
                 const totalUploadedSizeRefresh = await getTotalUploadedSize(
-                    userRefresh.walletAddress
+                    walletAddress
                 );
                 const remainingSizeRefresh =
                     uploadLimitRefresh - totalUploadedSizeRefresh;
 
                 bot.sendMessage(
                     chatId,
-                    `Current wallet address: ${
-                        userRefresh.walletAddress
-                    }\nToken balance: ${balanceRefresh} TRONFILE\nUpload limit: ${(
+                    `Current wallet address: ${walletAddress}\nToken balance: ${balanceRefresh} TRONFILE\nUpload limit: ${(
                         uploadLimitRefresh /
                         (1024 * 1024)
                     ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -310,34 +321,26 @@ bot.on("callback_query", async (callbackQuery) => {
                     ],
                 },
             });
+            break;
     }
 });
 
 bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
 
-    if (msg.text && msg.text.startsWith("0x")) {
-        const walletAddress = msg.text.toLowerCase(); // Convert to lowercase
+    if (msg.text && msg.text.startsWith("T")) {
+        const walletAddress = msg.text; // Use the wallet address as provided
         const userAction = session[chatId] ? session[chatId].action : null;
 
         try {
-            let user = await User.findOne({ chatId });
+            const existingWallet = await getOrCreateUserWallet(
+                chatId,
+                walletAddress
+            );
 
-            if (userAction === "change_wallet") {
-                user.walletAddress = walletAddress;
-                delete session[chatId];
-            } else {
-                if (!user) {
-                    user = new User({ chatId, walletAddress });
-                } else {
-                    user.walletAddress = walletAddress;
-                }
-            }
-
-            await user.save();
             bot.sendMessage(
                 chatId,
-                "Wallet address set. Please upload your file now.",
+                `Wallet address set: ${existingWallet}. Please upload your file now.`,
                 {
                     reply_markup: {
                         inline_keyboard: [
@@ -379,7 +382,7 @@ bot.on("message", async (msg) => {
                 return;
             }
 
-            const walletAddress = user.walletAddress.toLowerCase(); // Ensure wallet address is in lowercase
+            const walletAddress = user.walletAddress; // Use the stored wallet address
             const balance = await fetchTokenBalance(walletAddress);
             const uploadLimit = getUploadLimit(balance);
             const totalUploadedSize = await getTotalUploadedSize(walletAddress);
@@ -443,7 +446,7 @@ bot.on("message", async (msg) => {
                     await newFile.save();
                     bot.sendMessage(
                         chatId,
-                        "File uploaded successfully and saved to database.",
+                        `File uploaded successfully and saved to database.`,
                         {
                             reply_markup: {
                                 inline_keyboard: [
