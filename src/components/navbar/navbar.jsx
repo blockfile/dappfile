@@ -9,6 +9,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3 from "web3";
+
 function Navbar() {
     const [isConnected, setIsConnected] = useState(false);
     const [account, setAccount] = useState("");
@@ -26,7 +27,7 @@ function Navbar() {
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
-    // Function to format the wallet address for display
+
     const formatAddress = (address) =>
         address
             ? `${address.substring(0, 6)}...${address.substring(
@@ -34,32 +35,86 @@ function Navbar() {
               )}`
             : "";
 
-    // Function to fetch token balance from BscScan
-    const fetchTokenBalance = async (walletAddress) => {
-        const apiKey = "9IQVWBVV4U8DX8YI7EC56F3HBYJEE1EWNX";
-        const contractAddress = "0x2d4531984368ab56d71f8f5ed52c6fd383f9f278";
-        const url = `https://api.basescan.org/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
+    const fetchTronTokenBalance = async (walletAddress) => {
+        const apiKey = "ad46ddd1-006e-406a-9b94-aabf39bbb286";
+        const contractAddress = "TFenNvccFr9zvkh9xhQspcAxY4xxttNkWg";
+        const url = `https://apilist.tronscanapi.com/api/account/tokens?address=${walletAddress}&start=0&limit=20&hidden=0&show=0&sortType=0&sortBy=0&apikey=${apiKey}`;
 
         try {
             const response = await axios.get(url);
-            if (response.data && response.data.result) {
-                const balance = response.data.result / 1e18; // Adjust based on the token's decimals
-                setTokenBalance(balance);
+            if (response.data && response.data.data) {
+                const tokenData = response.data.data.find(
+                    (token) => token.tokenId === contractAddress
+                );
+
+                if (tokenData) {
+                    const balance =
+                        tokenData.balance /
+                        Math.pow(10, tokenData.tokenDecimal);
+                    setTokenBalance(balance);
+                } else {
+                    console.log("Token not found in wallet.");
+                    setTokenBalance(0);
+                }
+            } else {
+                console.error("No token data found.");
+                setTokenBalance(0);
             }
         } catch (error) {
-            console.error("Error fetching token balance:", error);
+            console.error("Error fetching TRC20 token balance:", error);
             setTokenBalance(0);
         }
     };
-    // This function will be triggered when the modal background is clicked
+
     const handleModalBackgroundClick = (event) => {
-        // Check if the click is on the modal background (and not the modal itself)
         if (event.target.className.includes("modal-background")) {
-            setShowDisconnectModal(false); // Close the modal
+            setShowDisconnectModal(false);
         }
     };
 
-    // Connect to MetaMask wallet
+    const connectTronLink = async () => {
+        try {
+            // Check if TronLink is installed
+            if (window.tronWeb && window.tronWeb.defaultAddress) {
+                // Check if TronLink is ready (wallet is unlocked)
+                if (window.tronWeb.ready) {
+                    const tronLinkAccount =
+                        window.tronWeb.defaultAddress.base58;
+                    setAccount(tronLinkAccount);
+                    setIsConnected(true);
+                    setBlockieImage(makeBlockie(tronLinkAccount));
+                    fetchTronTokenBalance(tronLinkAccount);
+                } else {
+                    // Request the user to unlock TronLink
+                    await window.tronLink.request({
+                        method: "tron_requestAccounts",
+                    });
+
+                    // Re-check if TronLink is ready after the request
+                    if (window.tronWeb.ready) {
+                        const tronLinkAccount =
+                            window.tronWeb.defaultAddress.base58;
+                        setAccount(tronLinkAccount);
+                        setIsConnected(true);
+                        setBlockieImage(makeBlockie(tronLinkAccount));
+                        fetchTronTokenBalance(tronLinkAccount);
+                    } else {
+                        alert("Please unlock your TronLink wallet.");
+                    }
+                }
+            } else {
+                alert(
+                    "TronLink is not installed. Please install TronLink to use this feature."
+                );
+            }
+        } catch (error) {
+            console.error("Error connecting to TronLink", error);
+            alert(
+                "There was an error connecting to TronLink. Please try again."
+            );
+        }
+    };
+
     const handleConnectWallet = async () => {
         if (window.ethereum && typeof window.ethereum.request === "function") {
             try {
@@ -69,7 +124,7 @@ function Navbar() {
                 setAccount(accounts[0]);
                 setIsConnected(true);
                 setBlockieImage(makeBlockie(accounts[0]));
-                fetchTokenBalance(accounts[0]);
+                fetchTronTokenBalance(accounts[0]);
             } catch (error) {
                 console.error(error);
             }
@@ -79,6 +134,7 @@ function Navbar() {
             );
         }
     };
+
     const connectToMetaMask = async () => {
         if (window.ethereum && window.ethereum.isMetaMask) {
             try {
@@ -88,9 +144,8 @@ function Navbar() {
                 setAccount(accounts[0]);
                 setIsConnected(true);
                 setBlockieImage(makeBlockie(accounts[0]));
-                fetchTokenBalance(accounts[0]);
+                fetchTronTokenBalance(accounts[0]);
                 setShowDisconnectModal(false);
-                console.log("MetaMask accounts", accounts);
             } catch (error) {
                 console.error("Error connecting to MetaMask", error);
             }
@@ -111,7 +166,7 @@ function Navbar() {
                 setAccount(accounts[0]);
                 setIsConnected(true);
                 setBlockieImage(makeBlockie(accounts[0]));
-                fetchTokenBalance(accounts[0]);
+                fetchTronTokenBalance(accounts[0]);
                 setShowDisconnectModal(false);
             } catch (error) {
                 console.error("Error connecting to OKX Wallet:", error);
@@ -122,13 +177,12 @@ function Navbar() {
     };
 
     const connectWithWalletConnect = async () => {
-        // Initialize a WalletConnectProvider
         const provider = new WalletConnectProvider({
             rpc: {
-                8453: "https://mainnet.base.org", // Base Mainnet RPC URL
+                8453: "https://mainnet.base.org",
             },
-            chainId: 8453, // Base Mainnet Chain ID
-            bridge: "https://bridge.walletconnect.org", // Default bridge
+            chainId: 8453,
+            bridge: "https://bridge.walletconnect.org",
         });
 
         try {
@@ -141,17 +195,24 @@ function Navbar() {
             setAccount(account);
             setIsConnected(true);
             setBlockieImage(makeBlockie(account));
-            fetchTokenBalance(account);
+            fetchTronTokenBalance(account);
             setShowDisconnectModal(false);
         } catch (error) {
             console.error("Error connecting with WalletConnect:", error);
         }
     };
 
-    // Effect hook to check if a wallet is already connected and to handle account changes
     useEffect(() => {
         const checkIfWalletIsConnected = async () => {
-            if (
+            if (window.tronWeb && window.tronWeb.ready) {
+                const tronLinkAccount = window.tronWeb.defaultAddress.base58;
+                if (tronLinkAccount) {
+                    setAccount(tronLinkAccount);
+                    setIsConnected(true);
+                    setBlockieImage(makeBlockie(tronLinkAccount));
+                    fetchTronTokenBalance(tronLinkAccount);
+                }
+            } else if (
                 window.ethereum &&
                 typeof window.ethereum.request === "function"
             ) {
@@ -162,13 +223,8 @@ function Navbar() {
                     setAccount(accounts[0]);
                     setIsConnected(true);
                     setBlockieImage(makeBlockie(accounts[0]));
-                    // Fetch token balance on component mount if already connected
-                    fetchTokenBalance(accounts[0]);
+                    fetchTronTokenBalance(accounts[0]);
                 }
-            } else {
-                console.log(
-                    "Ethereum wallet integration not supported on this browser."
-                );
             }
         };
 
@@ -179,7 +235,7 @@ function Navbar() {
                 setAccount(accounts[0]);
                 setIsConnected(true);
                 setBlockieImage(makeBlockie(accounts[0]));
-                fetchTokenBalance(accounts[0]);
+                fetchTronTokenBalance(accounts[0]);
             } else {
                 setIsConnected(false);
                 setAccount("");
@@ -192,7 +248,6 @@ function Navbar() {
             window.ethereum.on("accountsChanged", handleAccountsChanged);
         }
 
-        // Cleanup function
         return () => {
             if (window.ethereum) {
                 window.ethereum.removeListener(
@@ -294,12 +349,9 @@ function Navbar() {
             </nav>
             {isMobileMenuOpen && (
                 <>
-                    {/* Overlay */}
                     <div
                         onClick={toggleMobileMenu}
                         className="fixed top-0 left-0 w-full h-full backdrop-blur-xl bg-black bg-opacity-50 z-40 "></div>
-
-                    {/* Menu Items */}
                     <ul className="fixed top-0 right-0 left-0 mt-2 mr-2 flex flex-col space-y-4 text-xl z-50 p-4 items-center font-anta">
                         <div className="flex justify-between">
                             <div className="flex space-x-2">
@@ -421,6 +473,13 @@ function Navbar() {
                                 WALLET CONNECT
                             </button>
                         </div>
+                        <div
+                            className="mt-4 modal-shape px-24 py-2 bg-gray-900  hover:bg-lime-950 border-2 border-gray-700"
+                            onClick={connectTronLink}>
+                            <button className=" text-white p-2 rounded-lg ">
+                                TRONLINK
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -462,4 +521,5 @@ function Navbar() {
         </div>
     );
 }
+
 export default Navbar;
