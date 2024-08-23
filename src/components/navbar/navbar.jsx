@@ -139,17 +139,13 @@ function Navbar() {
 
     return (
         <div>
-            <nav className=" backdrop-blur-3xl hover:text-black text-white md:w-3/4 bg-black bg-opacity-35  rounded-b-xl mx-auto modal-nav">
+            <nav className="backdrop-blur-3xl hover:text-black text-white md:w-3/4 bg-black bg-opacity-35 rounded-b-xl mx-auto modal-nav">
                 <div className="flex justify-between">
                     <div className="flex space-x-2">
-                        <img
-                            src={logo}
-                            alt=""
-                            className=" h-12  my-auto ml-5"
-                        />
+                        <img src={logo} alt="" className="h-12 my-auto ml-5" />
                         <div className="my-auto">
                             <Link to="/">
-                                <span className=" text-3xl">TRONFILE</span>
+                                <span className="text-3xl">TRONFILE</span>
                             </Link>
                         </div>
                         <div className="md:hidden absolute right-0 pr-4 mt-2">
@@ -165,9 +161,9 @@ function Navbar() {
                     <div
                         className={`${
                             isMobileMenuOpen ? "flex" : "hidden"
-                        } md:flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 `}>
+                        } md:flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6`}>
                         {!isConnected ? (
-                            <div className="p-2 hidden lg:block ">
+                            <div className="p-2 hidden lg:block">
                                 <button
                                     type="button"
                                     onClick={() => setShowDisconnectModal(true)}
@@ -220,6 +216,90 @@ function Navbar() {
                 </div>
             </nav>
 
+            {/* Mobile Menu */}
+            {isMobileMenuOpen && (
+                <>
+                    {/* Overlay */}
+                    <div
+                        onClick={toggleMobileMenu}
+                        className="fixed top-0 left-0 w-full h-full backdrop-blur-xl bg-black bg-opacity-50 z-40"></div>
+
+                    {/* Menu Items */}
+                    <ul className="fixed top-0 right-0 left-0 mt-2 mr-2 flex flex-col space-y-4 text-xl z-50 p-4 items-center font-anta">
+                        <div className="flex justify-between">
+                            <div className="flex space-x-2">
+                                <img
+                                    src={logo}
+                                    alt=""
+                                    className="h-12 my-auto"
+                                />
+                                <div className="my-auto">
+                                    <span className="text-3xl">TRONFILE</span>
+                                </div>
+                            </div>
+                        </div>
+                        {!isConnected ? (
+                            <li className="w-full">
+                                <button
+                                    onClick={setShowDisconnectModal}
+                                    className="w-full text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex justify-center items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700">
+                                    Connect Wallet
+                                </button>
+                            </li>
+                        ) : (
+                            <>
+                                <li className="w-full border border-gray-500 hover:bg-slate-800 focus:ring-4 focus:outline-none focus:ring-gray-500 rounded-lg text-sm text-center flex justify-center items-center py-2">
+                                    <Link to="/">
+                                        <div className="flex space-x-2 justify-center items-center cursor-pointer">
+                                            <IoArrowBackCircleOutline
+                                                size={30}
+                                            />
+                                            <span className="text-xl shadow-2xl">
+                                                RETURN TO DASHBOARD
+                                            </span>
+                                        </div>
+                                    </Link>
+                                </li>
+                                <li className="w-full border border-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-500 rounded-lg text-sm text-center flex justify-center items-center py-2">
+                                    <div className="flex space-x-2 justify-center items-center">
+                                        <img
+                                            src={logo}
+                                            alt="emptylogo"
+                                            className="h-7 w-7 rounded-full"
+                                        />
+                                        <span className="text-xl shadow-2xl">
+                                            {tokenBalance.toFixed(0)}
+                                        </span>
+                                        <span className="text-xl shadow-2xl">
+                                            TRONFILE
+                                        </span>
+                                    </div>
+                                </li>
+                                <li className="w-full border border-gray-500 focus:ring-4 focus:outline-none rounded-lg text-sm flex justify-center items-center py-2">
+                                    <div className="flex space-x-2 justify-center items-center">
+                                        <img
+                                            src={blockieImage}
+                                            alt="emptylogo"
+                                            className="h-7 w-7 rounded-full cursor-pointer"
+                                        />
+
+                                        <span
+                                            onClick={() =>
+                                                setShowDisconnectConfirmationModal(
+                                                    true
+                                                )
+                                            }
+                                            className="cursor-pointer text-xl shadow-2xl">
+                                            {formatAddress(account)}
+                                        </span>
+                                    </div>
+                                </li>
+                            </>
+                        )}
+                    </ul>
+                </>
+            )}
+
             {/* Modal for Wallet Connection */}
             {showDisconnectModal && (
                 <div
@@ -227,11 +307,11 @@ function Navbar() {
                     onClick={handleModalBackgroundClick}>
                     <div className="bg-gray-400 bg-opacity-15 p-4 backdrop-blur-xl modal-div">
                         <div className="mb-10 mt-5">
-                            <div className=" text-left text-3xl ">
+                            <div className="text-left text-3xl">
                                 CONNECTING
-                                <span className=" animate-pulse">.</span>
-                                <span className=" animate-pulse">.</span>
-                                <span className=" animate-pulse">.</span>
+                                <span className="animate-pulse">.</span>
+                                <span className="animate-pulse">.</span>
+                                <span className="animate-pulse">.</span>
                             </div>
                             <svg
                                 className="ModalBox_box__divider__4L1XL md:w-[430px] sm:w-[300px]"
@@ -247,7 +327,7 @@ function Navbar() {
                         <div
                             className="mt-4 modal-shape px-24 py-2 bg-gray-900 hover:bg-lime-950 border-2 border-gray-700"
                             onClick={handleConnectTronWallet}>
-                            <button className=" text-white p-2 rounded-lg ">
+                            <button className="text-white p-2 rounded-lg">
                                 TRONLINK
                             </button>
                         </div>
@@ -258,8 +338,8 @@ function Navbar() {
             {/* Modal for Disconnect Confirmation */}
             {showDisconnectConfirmationModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-Mono">
-                    <div className=" bg-gray-800 p-4 rounded-lg modal-shape">
-                        <p className=" text-left text-3xl">DISCONNECT</p>
+                    <div className="bg-gray-800 p-4 rounded-lg modal-shape">
+                        <p className="text-left text-3xl">DISCONNECT</p>
                         <svg
                             className="ModalBox_box__divider__4L1XL md:w-[430px] sm:w-[300px]"
                             width="426"
