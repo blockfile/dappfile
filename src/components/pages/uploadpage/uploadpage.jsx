@@ -168,6 +168,59 @@ function UploadPage() {
 
         fetchWalletAddress();
     }, []);
+    useEffect(() => {
+        const checkTronLink = async () => {
+            const tronWeb = window.tronWeb;
+            if (tronWeb && tronWeb.ready) {
+                // TronLink is installed and a wallet is connected
+                if (tronWeb.defaultAddress.base58) {
+                    setAccount(tronWeb.defaultAddress.base58);
+                }
+            } else {
+                console.log("Waiting for TronLink...");
+                setTimeout(checkTronLink, 1000);
+            }
+        };
+
+        checkTronLink();
+    }, []);
+
+    useEffect(() => {
+        const tronWeb = window.tronWeb;
+
+        const accountChanged = (account) => {
+            if (account.base58) {
+                setAccount(account.base58);
+            } else {
+                setAccount("");
+            }
+        };
+
+        if (tronWeb) {
+            tronWeb.on("addressChanged", accountChanged);
+        }
+
+        return () => {
+            if (tronWeb) {
+                tronWeb.off("addressChanged", accountChanged);
+            }
+        };
+    }, []);
+
+    const connectTronLink = async () => {
+        const tronWeb = window.tronWeb;
+        if (tronWeb) {
+            if (!tronWeb.ready) {
+                alert("Please log in to TronLink.");
+            } else {
+                setAccount(tronWeb.defaultAddress.base58);
+            }
+        } else {
+            alert(
+                "TronLink is not installed. Please install TronLink to use this feature."
+            );
+        }
+    };
 
     const fetchFiles = async () => {
         if (account) {
@@ -632,7 +685,7 @@ function UploadPage() {
                             <div className="text-center text-5xl">
                                 {isWalletConnected
                                     ? "This folder is empty"
-                                    : "Please connect your MetaMask wallet first."}
+                                    : "Please connect your TRON wallet first."}
                             </div>
                         ) : (
                             <div className="files-table-container md:max-h-[750px] overflow-y-auto sm:max-h-[600px] bg-black   font-Mono rounded-t-xl">
