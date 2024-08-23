@@ -37,18 +37,33 @@ mongoose
 const bannerUrl = "../src/components/assets/Images/banner.jpg"; // Replace with your banner image URL
 
 const fetchTokenBalance = async (walletAddress) => {
-    const apiKey = "9IQVWBVV4U8DX8YI7EC56F3HBYJEE1EWNX"; // Replace with your BscScan API key
-    const contractAddress = "0x2d4531984368ab56d71f8f5ed52c6fd383f9f278"; // The contract address for the token
-    const url = `https://api.basescan.org/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`;
+    const apiKey = "ad46ddd1-006e-406a-9b94-aabf39bbb286";
+    const contractAddress = "TFenNvccFr9zvkh9xhQspcAxY4xxttNkWg"; // Your specific TRC20 contract address
+    const url = `https://apilist.tronscanapi.com/api/account/tokens?address=${walletAddress}&start=0&limit=20&hidden=0&show=0&sortType=0&sortBy=0&apikey=${apiKey}`;
 
     try {
         const response = await axios.get(url);
-        if (response.data && response.data.result) {
-            return response.data.result / 1e18; // Adjust based on the token's decimals
+        if (response.data && response.data.data) {
+            // Find the specific token using the contract address
+            const tokenData = response.data.data.find(
+                (token) => token.tokenId === contractAddress
+            );
+
+            if (tokenData) {
+                const balance =
+                    tokenData.balance / Math.pow(10, tokenData.tokenDecimal);
+                setTokenBalance(balance);
+            } else {
+                console.log("Token not found in wallet.");
+                setTokenBalance(0);
+            }
+        } else {
+            console.error("No token data found.");
+            setTokenBalance(0);
         }
     } catch (error) {
-        console.error("Error fetching token balance:", error);
-        return 0;
+        console.error("Error fetching TRC20 token balance:", error);
+        setTokenBalance(0);
     }
 };
 
