@@ -9,24 +9,22 @@ const File = require("../server/model/models"); // Import the UserFile model
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 let session = {};
-// Dynamically import node-fetch
-const AWS = require("aws-sdk");
 
+// Import the fetch method from node-fetch
 let fetch;
 import("node-fetch")
     .then(({ default: fetched }) => (fetch = fetched))
     .catch((err) => console.error("Failed to load node-fetch:", err));
 
 // Setup AWS S3 client for DigitalOcean Spaces
-AWS.config.update({
-    accessKeyId: process.env.SPACES_ACCESS_KEY_ID,
-    secretAccessKey: process.env.SPACES_SECRET_ACCESS_KEY,
-    region: "sgp1", // This is optional as the endpoint defines the region in DigitalOcean Spaces
-});
-
-const s3 = new AWS.S3({
-    endpoint: new AWS.Endpoint("https://sgp1.digitaloceanspaces.com"),
-    s3ForcePathStyle: true, // needed with custom endpoint
+const s3Client = new S3Client({
+    region: "sgp1", // Optional as the endpoint defines the region
+    endpoint: "https://sgp1.digitaloceanspaces.com",
+    credentials: {
+        accessKeyId: process.env.SPACES_ACCESS_KEY_ID,
+        secretAccessKey: process.env.SPACES_SECRET_ACCESS_KEY,
+    },
+    forcePathStyle: true, // needed with custom endpoint
 });
 
 mongoose
@@ -38,13 +36,12 @@ const bannerUrl = "../src/components/assets/Images/banner.jpg"; // Replace with 
 
 const fetchTokenBalance = async (walletAddress) => {
     const apiKey = "ad46ddd1-006e-406a-9b94-aabf39bbb286";
-    const contractAddress = "TFenNvccFr9zvkh9xhQspcAxY4xxttNkWg"; // Your specific TRC20 contract address
+    const contractAddress = "TPMo1RPVw5ZPSLjnoN8MiSpE8JvTCSaPdw"; // Your specific TRC20 contract address
     const url = `https://apilist.tronscanapi.com/api/account/tokens?address=${walletAddress}&start=0&limit=20&hidden=0&show=0&sortType=0&sortBy=0&apikey=${apiKey}`;
 
     try {
         const response = await axios.get(url);
         if (response.data && response.data.data) {
-            // Find the specific token using the contract address
             const tokenData = response.data.data.find(
                 (token) => token.tokenId === contractAddress
             );
@@ -52,18 +49,18 @@ const fetchTokenBalance = async (walletAddress) => {
             if (tokenData) {
                 const balance =
                     tokenData.balance / Math.pow(10, tokenData.tokenDecimal);
-                setTokenBalance(balance);
+                return balance;
             } else {
                 console.log("Token not found in wallet.");
-                setTokenBalance(0);
+                return 0;
             }
         } else {
             console.error("No token data found.");
-            setTokenBalance(0);
+            return 0;
         }
     } catch (error) {
         console.error("Error fetching TRC20 token balance:", error);
-        setTokenBalance(0);
+        return 0;
     }
 };
 
@@ -266,7 +263,7 @@ bot.on("callback_query", async (callbackQuery) => {
                     chatId,
                     `Current wallet address: ${
                         userRefresh.walletAddress
-                    }\nToken balance: ${balanceRefresh} ETF\nUpload limit: ${(
+                    }\nToken balance: ${balanceRefresh} TRONFILE\nUpload limit: ${(
                         uploadLimitRefresh /
                         (1024 * 1024)
                     ).toFixed(2)} MB\nTotal uploaded: ${(
@@ -430,23 +427,10 @@ bot.on("message", async (msg) => {
                 ContentType: mimeType,
             };
 
-            s3.upload(params, async function (err, data) {
-                if (err) {
-                    console.error("AWS S3 Upload Error:", err);
-                    bot.sendMessage(
-                        chatId,
-                        `Failed to upload the file to storage: ${err.message}`,
-                        {
-                            reply_markup: {
-                                inline_keyboard: [
-                                    [{ text: "Back", callback_data: "back" }],
-                                ],
-                            },
-                        }
-                    );
-                    return;
-                }
+            const command = new PutObjectCommand(params);
 
+            try {
+                const data = await s3Client.send(command);
                 const newFile = new File({
                     walletAddress,
                     filename: fileName,
@@ -482,7 +466,20 @@ bot.on("message", async (msg) => {
                         }
                     );
                 }
-            });
+            } catch (err) {
+                console.error("AWS S3 Upload Error:", err);
+                bot.sendMessage(
+                    chatId,
+                    `Failed to upload the file to storage: ${err.message}`,
+                    {
+                        reply_markup: {
+                            inline_keyboard: [
+                                [{ text: "Back", callback_data: "back" }],
+                            ],
+                        },
+                    }
+                );
+            }
         } catch (err) {
             console.error("Error processing file:", err);
             bot.sendMessage(

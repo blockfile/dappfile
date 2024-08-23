@@ -35,7 +35,7 @@ function Navbar() {
     // Function to fetch token balance from TronScan API
     const fetchTokenBalance = async (walletAddress) => {
         const apiKey = "ad46ddd1-006e-406a-9b94-aabf39bbb286";
-        const contractAddress = "TFenNvccFr9zvkh9xhQspcAxY4xxttNkWg"; // Your specific TRC20 contract address
+        const contractAddress = "TPMo1RPVw5ZPSLjnoN8MiSpE8JvTCSaPdw"; // Your specific TRC20 contract address
         const url = `https://apilist.tronscanapi.com/api/account/tokens?address=${walletAddress}&start=0&limit=20&hidden=0&show=0&sortType=0&sortBy=0&apikey=${apiKey}`;
 
         try {
